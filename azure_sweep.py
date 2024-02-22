@@ -11,11 +11,12 @@ def get_arguments():
     parser.add_argument('--subscription_id')
     parser.add_argument('--resource_group')
     parser.add_argument('--workspace')
+    parser.add_argument('--compute')
     args = parser.parse_args()
-    return args.subscription_id, args.resource_group, args.workspace
+    return args.subscription_id, args.resource_group, args.workspace, args.compute
 
 
-subscription_id, resource_group, workspace = get_arguments()
+subscription_id, resource_group, workspace, compute = get_arguments()
 
 ml_client = MLClient(
     DefaultAzureCredential(), subscription_id, resource_group, workspace
@@ -28,7 +29,7 @@ command_job = command(
     inputs={
         'learning_rate': 0.9
     },
-    compute='csokagyozo1'
+    compute=compute
 )
 
 command_job_for_sweep = command_job(
@@ -36,7 +37,7 @@ command_job_for_sweep = command_job(
 )
 
 sweep_job = command_job_for_sweep.sweep(
-    compute="csokagyozo1",
+    compute=compute,
     sampling_algorithm = "grid",
     primary_metric="accuracy",
     goal="Maximize"
