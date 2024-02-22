@@ -12,11 +12,12 @@ def get_arguments():
     parser.add_argument('--resource_group')
     parser.add_argument('--workspace')
     parser.add_argument('--compute')
+    parser.add_argument('--job_name')
     args = parser.parse_args()
-    return args.subscription_id, args.resource_group, args.workspace, args.compute
+    return args.subscription_id, args.resource_group, args.workspace, args.compute, args.job_name
 
 
-subscription_id, resource_group, workspace, compute = get_arguments()
+subscription_id, resource_group, workspace, compute, job_name = get_arguments()
 
 ml_client = MLClient(
     DefaultAzureCredential(), subscription_id, resource_group, workspace
@@ -43,7 +44,7 @@ sweep_job = command_job_for_sweep.sweep(
     goal="Maximize"
 )
 
-sweep_job.display_name = "cli-try-4"
+sweep_job.display_name = job_name
 sweep_job.experiment_name = "mnist-sweep-example"
 sweep_job.description = "Run a hyperparameter sweep job for Adam on MNIST dataset."
 sweep_job.set_limits(max_total_trials=20, max_concurrent_trials=3, timeout=12600)
